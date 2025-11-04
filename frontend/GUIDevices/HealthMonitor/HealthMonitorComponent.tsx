@@ -13,7 +13,7 @@ export default function HealthBar({ value, label = "Health" }: Props) {
   const width = anim.interpolate({ inputRange: [0, 100], outputRange: ["0%", "100%"] });
   const color = anim.interpolate({
     inputRange: [0, 50, 100],
-    outputRange: ["#e74c3c", "#f1c40f", "#2ecc71"], // red → yellow → green
+    outputRange: ["#ff1900ff", "#ffcc00ff", "#00ff6aff"], // red → yellow → green
   });
 
   return (
@@ -29,13 +29,23 @@ export default function HealthBar({ value, label = "Health" }: Props) {
 
 const styles = StyleSheet.create({
   card: { gap: 6 },
-  title: { color: "#fff", fontWeight: "600" },
+  title: { color: "#fff",
+  fontWeight: "600",
+  textAlign: "center",
+  alignSelf: "center",
+  width: "100%",
+  fontSize: 30,
+},
   wrap: {
     height: 24,
     backgroundColor: "#222",
     borderRadius: 12,
     overflow: "hidden",
     justifyContent: "center",
+    textShadowColor: 'rgba(0, 0, 0, 0.95)',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 8, // try 6–12 for more/less glow
+    
   },
   fill: { height: "100%" },
   valueText: {
@@ -45,5 +55,6 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "600",
     fontVariant: ["tabular-nums"],
+    fontSize: 20,
   },
 });
