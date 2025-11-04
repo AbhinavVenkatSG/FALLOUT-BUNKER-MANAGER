@@ -20,4 +20,6 @@ Abhinav, Devki, Rami, Ricardo, Spencer
 GenAI was used to:   
 - Create most of the FileManager class (Simple file reader)
 - Create the values put into the SensorEmulationFiles/ .dat files
+- All of the CSS Styling
+- Assisted some react component creation at first (health bar, thermometer)
 - Typing autocomplete
