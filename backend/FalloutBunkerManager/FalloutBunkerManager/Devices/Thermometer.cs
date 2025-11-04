@@ -6,7 +6,7 @@ class Thermometer : IDevice
     // Params
     public FileManager fileManager { get; }
     public DeviceType type { get { return DeviceType.Thermometer; } }
-    public string filePath { get; } = System.IO.Path.Combine("SensorEmulationFiles", "Temperature.dat");
+    public string filePath { get; } = Path.Combine("SensorEmulationFiles", "Temperature.dat");
 
     // Constructor
     public Thermometer()
