@@ -1,94 +1,95 @@
-import React, { useEffect, useRef } from "react";
-import { Animated, StyleSheet, Text, View } from "react-native";
-// Optional: centralize your colors in a theme file and import them.
-// For now, inlined to keep this file standalone:
-const BAR_COLORS = ["#ff1900ff", "#ffcc00ff", "#00ff6aff"] as const;
+// Rami Musleh
 
-type Props = {
-  value: number;          // 0..100
-  label?: string;         // default "Health"
-  showLabel?: boolean;    // default true
-  height?: number;        // bar height (default 24)
-  radius?: number;        // corner radius (default 12)
-};
+import React from "react";
+import { StyleSheet, Text, View } from "react-native";
 
-export default function HealthBar({
-  value,
-  label = "Health",
-  showLabel = true,
-  height = 24,
-  radius = 12,
-}: Props) {
-  const clamped = Math.max(0, Math.min(100, value));
-  const anim = useRef(new Animated.Value(clamped)).current;
+type Props = { value: number };
 
-  useEffect(() => {
-    Animated.timing(anim, { toValue: clamped, duration: 250, useNativeDriver: false }).start();
-  }, [clamped]);
+const BAR_COLORS = [
+  { stop: 0, color: [255, 25, 0, 255] },
+  { stop: 50, color: [255, 204, 0, 255] },
+  { stop: 100, color: [0, 255, 106, 255] },
+];
 
-  const width = anim.interpolate({ inputRange: [0, 100], outputRange: ["0%", "100%"] });
-  const color = anim.interpolate({
-    inputRange: [0, 50, 100],
-    outputRange: [BAR_COLORS[0], BAR_COLORS[1], BAR_COLORS[2]], // red → yellow → green
-  });
+const RADIUS = 20;
+const TRACK_HEIGHT = 24;
+
+export default function HealthMonitor({ value }: Props) {
+  value = Math.round(boundsCheck(value));
+  const fillColor = getFillColor(value);
+  const roundRight = value > 98 ? RADIUS : 0;
 
   return (
-    <View style={styles.card}>
-      {showLabel && <Text style={styles.title}>{label}</Text>}
-
-      <View style={[styles.track, { height, borderRadius: radius }]}>
-        <Animated.View
+    <View style={styles.container}>
+      <Text style={styles.title}>Bunker Wellbeing</Text>
+      <View style={styles.track}>
+        <View
           style={[
             styles.fill,
             {
-              width,
-              backgroundColor: color,
-              borderTopLeftRadius: radius,
-              borderBottomLeftRadius: radius,
-              // round right corners only when near 100% to avoid clipping
-              borderTopRightRadius:  clamped > 98 ? radius : 0,
-              borderBottomRightRadius: clamped > 98 ? radius : 0,
+              width: `${value}%`,
+              backgroundColor: fillColor,
+              borderTopRightRadius: roundRight,
+              borderBottomRightRadius: roundRight,
             },
           ]}
         />
-        <Text style={styles.value}>{Math.round(clamped)}</Text>
+        <Text style={styles.value}>{value}%</Text>
       </View>
     </View>
   );
 }
 
+function boundsCheck(value: number) {
+  return Math.max(0, Math.min(100, value));
+}
+
+function getFillColor(value: number) {
+  const [start, end] = value <= 50 ? [BAR_COLORS[0], BAR_COLORS[1]] : [BAR_COLORS[1], BAR_COLORS[2]];
+  const range = end.stop - start.stop || 1;
+  const t = (value - start.stop) / range;
+  const interpolated = start.color.map((component, index) => {
+    const delta = end.color[index] - component;
+    return Math.round(component + delta * t);
+  });
+  return `rgba(${interpolated[0]}, ${interpolated[1]}, ${interpolated[2]}, ${interpolated[3] / 255})`;
+}
+
 const styles = StyleSheet.create({
-  card: {
+  container: {
     alignSelf: "stretch",
     gap: 6,
   },
   title: {
     color: "#fff",
     fontWeight: "700",
-    fontSize: 20, 
-    textAlign: "center",
+    fontSize: 20,
+    textAlign: "left",
+    paddingLeft: 14,
     alignSelf: "center",
     width: "100%",
-    textShadowColor: "rgba(255,255,255,0.9)", // glow
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 6,
   },
   track: {
     backgroundColor: "#333",
+    borderRadius: RADIUS,
     overflow: "hidden",
     justifyContent: "center",
+    height: TRACK_HEIGHT,
   },
   fill: {
-    height: "100%"
+    height: "100%",
+    borderTopLeftRadius: RADIUS,
+    borderBottomLeftRadius: RADIUS,
   },
   value: {
     position: "absolute",
     width: "100%",
-    textAlign: "center",
+    textAlign: "left",
+    paddingLeft: 20,
     color: "#fff",
     fontWeight: "700",
     fontVariant: ["tabular-nums"],
-    textShadowColor: "rgba(0, 0, 0, 0.95)", // white glow
+    textShadowColor: "rgba(0, 0, 0, 0.95)",
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 8,
   },

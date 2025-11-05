@@ -11,7 +11,7 @@ const BAR_COLORS = [
   { stop: 100, color: [0, 255, 106, 255] },
 ];
 
-export default function OxygenScrubber({ value }: Props) {
+export default function Generator({ value }: Props) {
   value = Math.round(boundsCheck(value));
   const fillColor = getFillColor(value);
 
@@ -21,7 +21,7 @@ export default function OxygenScrubber({ value }: Props) {
         <View style={[styles.fill, { height: `${value}%`, backgroundColor: fillColor }]} />
       </View>
       <Text style={styles.value}>{value}%</Text>
-      <Text style={styles.label}>🫧 O2 Scrubber</Text>
+      <Text style={styles.label}>⛽ Generator</Text>
     </View>
   );
 }

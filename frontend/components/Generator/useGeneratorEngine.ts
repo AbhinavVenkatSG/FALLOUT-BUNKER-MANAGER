@@ -9,10 +9,6 @@ export type GeneratorSample = {
 
 export type SourceFn = () => Promise<GeneratorSample>;
 
-/**
- * Default simulator: smooth drift with occasional jitter.
- * No network required; great for demos and tests.
- */
 export function makeSimulatedSource(initial = 60): SourceFn {
   let seq = 0;
   let val = initial;
@@ -29,24 +25,6 @@ export function makeSimulatedSource(initial = 60): SourceFn {
   };
 }
 
-/**
- * Optional: turn a URL into a SourceFn (expects { seq, value }).
- * If you’re not using an API, ignore this.
- */
-export function makeUrlSource(url: string): SourceFn {
-  return async () => {
-    const u = url + (url.includes("?") ? "&" : "?") + "t=" + Date.now();
-    const res = await fetch(u, { cache: "no-store" });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const json = await res.json();
-    const seq = Number(json?.seq);
-    const value = Number(json?.value);
-    if (!Number.isFinite(seq) || !Number.isFinite(value)) {
-      throw new Error("Malformed payload");
-    }
-    return { seq, value };
-  };
-}
 
 function clamp(n: number, min = 0, max = 100) {
   return Math.max(min, Math.min(max, n));

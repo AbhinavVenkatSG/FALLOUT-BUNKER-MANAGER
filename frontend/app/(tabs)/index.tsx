@@ -1,9 +1,9 @@
 import Dosimeter from "@/components/Dosimeter/Dosimeter";
 import React from "react";
 import { StyleSheet, Text, View, useWindowDimensions } from "react-native";
-import { LiveGeneratorComponent, STATIC_GENERATOR } from "../../components/Generator/LiveGenerator";
-import HealthBar from "../../components/HealthMonitor/HealthMonitor";
-import { OxygenScrubberComponent, STATIC_OXYGEN } from "../../components/OxygenScrubber/OxygenScrubber";
+import Generator from "../../components/Generator/Generator";
+import HealthMonitor from "../../components/HealthMonitor/HealthMonitor";
+import OxygenScrubber from "../../components/OxygenScrubber/OxygenScrubber";
 import Thermometer from "../../components/Thermometer/Thermometer";
 
 const BASE_WIDTH = 1024;
@@ -19,17 +19,17 @@ export default function HomeScreen() {
         <View style={styles.container}>
           {/* Centered health bar at top */}
           <View style={styles.healthContainer}>
-            <HealthBar value={67} />
+            <HealthMonitor value={35} />
           </View>
 
           {/* Centered power & atmosphere controls */}
           <View style={styles.resourceRow}>
             <View style={styles.resourceModule}>
-              <LiveGeneratorComponent value={STATIC_GENERATOR} />
+              <Generator value={21} />
             </View>
 
             <View style={styles.resourceModule}>
-              <OxygenScrubberComponent value={STATIC_OXYGEN} />
+              <OxygenScrubber value={88} />
             </View>
           </View>
 
@@ -38,11 +38,11 @@ export default function HomeScreen() {
             <Text style={styles.exteriorTitle}>Exterior Values</Text>
 
             <View style={styles.exteriorItem}>
-              <Thermometer value={67} />
+              <Thermometer value={23} />
             </View>
 
             <View style={styles.exteriorItem}>
-              <Dosimeter value={67} />
+              <Dosimeter value={90} />
             </View>
           </View>
         </View>
