@@ -5,6 +5,7 @@ import Generator from "../../components/Generator/Generator";
 import HealthMonitor from "../../components/HealthMonitor/HealthMonitor";
 import OxygenScrubber from "../../components/OxygenScrubber/OxygenScrubber";
 import Thermometer from "../../components/Thermometer/Thermometer";
+import WaterSensor from "../../components/WaterSensor/WaterSensor";
 
 const BASE_WIDTH = 1024;
 const BASE_HEIGHT = 768;
@@ -24,6 +25,11 @@ export default function HomeScreen() {
 
           {/* Centered power & atmosphere controls */}
           <View style={styles.resourceRow}>
+
+            <View style={styles.resourceModule}>
+              <WaterSensor value={60} />
+            </View>
+
             <View style={styles.resourceModule}>
               <Generator value={21} />
             </View>
@@ -31,6 +37,7 @@ export default function HomeScreen() {
             <View style={styles.resourceModule}>
               <OxygenScrubber value={88} />
             </View>
+
           </View>
 
           {/* Right-side "Exterior Values" box */}

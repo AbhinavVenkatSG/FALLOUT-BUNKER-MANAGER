@@ -6,7 +6,11 @@ class WaterSensor : IDevice
     // Params
     public FileManager fileManager { get; }
     public DeviceType type { get { return DeviceType.WaterSensor; } }
-    public string filePath { get; } = System.IO.Path.Combine("SensorEmulationFiles", "WaterLevels.dat");
+    public string filePath { get; } = Path.Combine("SensorEmulationFiles", "WaterLevels.dat");
+
+    private float currentWaterLevel { get; set; } = 100.0f;
+    private const float MAX_WATER = 100f;
+    private const float MIN_WATER = 0f;
 
     // Constructor
     public WaterSensor()
@@ -17,14 +21,19 @@ class WaterSensor : IDevice
     // Methods
     public DeviceStatus QueryLatest()
     {
-        throw new NotImplementedException();
         float readInValue = fileManager.GetNextValue();
-        // Do device specific math, if required
-        // return new DeviceStatus
-        // { 
-        //     type = DeviceType.WaterSensor,
-        //     currentValue = 0 // Replace with actual processed value
-        // };
+
+        currentWaterLevel += readInValue;
+
+        // Ensures water level stays within bounds
+        if (currentWaterLevel > MAX_WATER) currentWaterLevel = MAX_WATER;
+        if (currentWaterLevel < MIN_WATER) currentWaterLevel = MIN_WATER;
+
+        return new DeviceStatus
+        { 
+            type = DeviceType.WaterSensor,
+            currentValue = currentWaterLevel
+        };
     }
 
     public void HandleCommand(DeviceCommand command)
