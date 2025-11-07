@@ -25,6 +25,11 @@ export default function HomeScreen() {
 
           {/* Centered power & atmosphere controls */}
           <View style={styles.resourceRow}>
+
+            <View style={styles.resourceModule}>
+              <WaterSensor value={60} />
+            </View>
+
             <View style={styles.resourceModule}>
               <Generator value={21} />
             </View>
@@ -33,9 +38,6 @@ export default function HomeScreen() {
               <OxygenScrubber value={88} />
             </View>
 
-          <View style={styles.resourceModule}>
-              <WaterSensor value={88} />
-            </View>
           </View>
 
           {/* Right-side "Exterior Values" box */}
