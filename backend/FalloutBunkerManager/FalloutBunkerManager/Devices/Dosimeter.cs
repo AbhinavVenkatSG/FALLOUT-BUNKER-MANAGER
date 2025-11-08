@@ -1,16 +1,17 @@
 // Ricardo & Spencer
 // Dosimeter Device, reads static radiation values from a file
-
-class Dosimeter : IDevice
+namespace FalloutBunkerManager.Devices{
+public class Dosimeter : IDevice
 {
     // Params
     public FileManager fileManager { get; }
     public DeviceType type { get { return DeviceType.Dosimeter; } }
-    public string filePath { get; } = Path.Combine("SensorEmulationFiles", "RadiationLevels.dat");
+    public string filePath { get; }
 
     // Constructor
-    public Dosimeter()
+    public Dosimeter(string basefolder)
     {
+        filePath =Path.Combine(basefolder,"RadiationLevels.dat");
         fileManager = new FileManager(filePath);
     }
 
@@ -31,4 +32,5 @@ class Dosimeter : IDevice
         throw new NotImplementedException();
         // Im not sure yet, sprint 2 issue :P
     }
+}
 }

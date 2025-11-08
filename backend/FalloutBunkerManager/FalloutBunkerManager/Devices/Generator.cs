@@ -1,20 +1,21 @@
 // Spencer Watkinson
 // Generator Device, reads delta gasoline usage values from a file
-
-class Generator : IDevice
+namespace FalloutBunkerManager.Devices{
+public class Generator : IDevice
 {
     // Params
     public FileManager fileManager { get; }
     public DeviceType type { get { return DeviceType.Generator; } }
-    public string filePath { get; } = System.IO.Path.Combine("SensorEmulationFiles", "GasolineLevels.dat");
+    public string filePath { get; }
 
     private float curGasLevel = 100f;
     private const float MAX_GAS_LEVEL = 100f;
     private const float MIN_GAS_LEVEL = 0f;
 
     // Constructor
-    public Generator()
+    public Generator(string baseFolder)
     {
+        filePath =Path.Combine(baseFolder,"GasolineLevels.dat");
         fileManager = new FileManager(filePath);
     }
 
@@ -41,4 +42,5 @@ class Generator : IDevice
         throw new NotImplementedException();
         // Im not sure yet, sprint 2 issue :P
     }
+}
 }
