@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View, useWindowDimensions, ActivityIndicator } from "react-native";
-
+//import for the loading screen
 import Dosimeter from "../../components/Dosimeter/Dosimeter";
 import Generator from "../../components/Generator/Generator";
 import HealthMonitor from "../../components/HealthMonitor/HealthMonitor";
@@ -18,6 +18,8 @@ interface Device {
   type: number;
   currentValue: number;
 }
+
+//polling function that polls the api
 // okay here the plan was to call the api every 3 seconds or so and see if the website is updating properly
 // the issue is it is doing but the values are not changing so for now im commiting this but i have to look into that later 
 

@@ -8,14 +8,16 @@ public class Dosimeter : IDevice
     public DeviceType type { get { return DeviceType.Dosimeter; } }
     public string filePath { get; }
 
+
     // Constructor
+    // i changed this so this accepts a basefolder because i was following a tutorial i created the api as a new project
+    // and the file paths were different
     public Dosimeter(string basefolder)
     {
         filePath =Path.Combine(basefolder,"RadiationLevels.dat");
         fileManager = new FileManager(filePath);
     }
 
-    // Methods
     public DeviceStatus QueryLatest()
     {
         float readInValue = fileManager.GetNextValue();

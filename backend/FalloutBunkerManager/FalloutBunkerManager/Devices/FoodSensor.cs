@@ -7,6 +7,9 @@ public class FoodSensor : IDevice
     public FileManager fileManager { get; }
     public DeviceType type { get { return DeviceType.FoodSensor; } }
     public string filePath { get; }
+    private float currentFoodLevel { get; set; } = 100.0f;
+    private float Max_Food = 100f;
+    private float Min_Food = 0f;
 
     // Constructor
     public FoodSensor(string baseFolder)
@@ -16,15 +19,19 @@ public class FoodSensor : IDevice
     }
 
     // Methods
-    public DeviceStatus QueryLatest()
+     public DeviceStatus QueryLatest()
     {
-        throw new NotImplementedException();
         float readInValue = fileManager.GetNextValue();
-        // Do device specific math, if required
+
+        currentFoodLevel += readInValue;
+
+        if (currentFoodLevel > Max_Food) currentFoodLevel = Max_Food;
+        if (currentFoodLevel < Min_Food) currentFoodLevel = Min_Food;
+
         return new DeviceStatus
         {
             type = DeviceType.FoodSensor,
-            currentValue = 0 // Replace with actual processed value
+            currentValue = currentFoodLevel
         };
     }
 
