@@ -1,18 +1,69 @@
-import Dosimeter from "@/components/Dosimeter/Dosimeter";
-import React from "react";
-import { StyleSheet, Text, View, useWindowDimensions } from "react-native";
+
+import React, { useEffect, useState } from "react";
+import { StyleSheet, Text, View, useWindowDimensions, ActivityIndicator } from "react-native";
+
+import Dosimeter from "../../components/Dosimeter/Dosimeter";
 import Generator from "../../components/Generator/Generator";
 import HealthMonitor from "../../components/HealthMonitor/HealthMonitor";
 import OxygenScrubber from "../../components/OxygenScrubber/OxygenScrubber";
 import Thermometer from "../../components/Thermometer/Thermometer";
 import WaterSensor from "../../components/WaterSensor/WaterSensor";
 
+// Adjust this to match your API port
+const API_URL = "http://localhost:5244/api/device";
 const BASE_WIDTH = 1024;
 const BASE_HEIGHT = 768;
+
+interface Device {
+  type: number;
+  currentValue: number;
+}
+// okay here the plan was to call the api every 3 seconds or so and see if the website is updating properly
+// the issue is it is doing but the values are not changing so for now im commiting this but i have to look into that later 
 
 export default function HomeScreen() {
   const { width, height } = useWindowDimensions();
   const scale = Math.min(width / BASE_WIDTH, height / BASE_HEIGHT);
+
+  const [devices, setDevices] = useState<Device[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Helper to get device value by type
+  const getValue = (typeIndex: number) => {
+    const device = devices.find(d => d.type === typeIndex);
+    return device?.currentValue ?? 0;
+  };
+
+  // Fetch devices from backend every second
+  
+// Fetch devices from backend every 3 seconds
+useEffect(() => {
+  let isFetching = false;
+
+  const fetchDevices = async () => {
+    if (isFetching) return; 
+    isFetching = true;
+    try {
+      const res = await fetch(API_URL);
+      const data: Device[] = await res.json();
+      setDevices(data);
+      setLoading(false);
+    } catch (err) {
+      console.error("Error fetching device data:", err);
+    } finally {
+      isFetching = false;
+    }
+  };
+
+  // initial fetch
+  fetchDevices();
+
+  // poll every 3 seconds
+  const interval = setInterval(fetchDevices, 3000);
+
+  // cleanup
+  return () => clearInterval(interval);
+}, []);
 
   return (
     <View style={styles.viewport}>
@@ -20,36 +71,30 @@ export default function HomeScreen() {
         <View style={styles.container}>
           {/* Centered health bar at top */}
           <View style={styles.healthContainer}>
-            <HealthMonitor value={35} />
+            <HealthMonitor value={getValue(0)} />
           </View>
 
           {/* Centered power & atmosphere controls */}
           <View style={styles.resourceRow}>
-
             <View style={styles.resourceModule}>
-              <WaterSensor value={60} />
+              <WaterSensor value={getValue(1)} />
             </View>
-
             <View style={styles.resourceModule}>
-              <Generator value={21} />
+              <Generator value={getValue(2)} />
             </View>
-
             <View style={styles.resourceModule}>
-              <OxygenScrubber value={88} />
+              <OxygenScrubber value={getValue(3)} />
             </View>
-
           </View>
 
           {/* Right-side "Exterior Values" box */}
           <View style={styles.exteriorBox}>
             <Text style={styles.exteriorTitle}>Exterior Values</Text>
-
             <View style={styles.exteriorItem}>
-              <Thermometer value={23} />
+              <Thermometer value={getValue(4)} />
             </View>
-
             <View style={styles.exteriorItem}>
-              <Dosimeter value={90} />
+              <Dosimeter value={getValue(5)} />
             </View>
           </View>
         </View>
@@ -81,12 +126,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 6,
   },
-  healthTitle: {
-    color: "#fff",
-    fontWeight: "700",
-    fontSize: 20,                
-    textAlign: "center",
-  },
   resourceRow: {
     flexDirection: "row",
     justifyContent: "center",
@@ -97,9 +136,8 @@ const styles = StyleSheet.create({
     marginRight: 250,
   },
   resourceModule: {
-    alignItems: "center"
+    alignItems: "center",
   },
-
   exteriorBox: {
     position: "absolute",
     right: 16,
@@ -119,14 +157,5 @@ const styles = StyleSheet.create({
   exteriorItem: {
     alignItems: "center",
     marginVertical: 8,
-  },
-  label: {
-    color: "#fff",
-    marginBottom: 4,
-  },
-  value: {
-    color: "#fff",
-    fontSize: 24,
-    fontWeight: "bold",
   },
 });
