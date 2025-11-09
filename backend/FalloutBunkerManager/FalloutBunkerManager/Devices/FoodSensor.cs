@@ -1,4 +1,4 @@
-// INSERT AUTHOR NAME HERE
+// Devki Nandan Sharma
 // Food Sensor Device, reads delta food values from a file
 namespace FalloutBunkerManager.Devices{
 public class FoodSensor : IDevice
