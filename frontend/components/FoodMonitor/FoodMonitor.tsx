@@ -1,13 +1,11 @@
 // Devki Nandan Sharma
 
-import react from "react";
+
 import { StyleSheet, Text, View } from "react-native";
 
 type Props = { value: number };
 
-
-//using the same bar colors as OxygenScrubber to keep consistancy 
-
+// Bar colors for consistency
 const BAR_COLORS = [
     { stop: 0, color: [255, 25, 0, 255] },
     { stop: 50, color: [255, 204, 0, 255] },
@@ -28,8 +26,6 @@ function getFillColor(value: number) {
     });
     return `rgba(${interpolated[0]}, ${interpolated[1]}, ${interpolated[2]}, ${interpolated[3] / 255})`;
 }
-
-//using the same styles from OxygenScrubber 
 
 const styles = StyleSheet.create({
     container: { alignItems: "center" },
@@ -60,16 +56,16 @@ const styles = StyleSheet.create({
 });
 
 export default function FoodMonitor({ value }: Props) {
-    value = Math.round(boundsCheck(value));
-    const fillColor = getFillColor(value);
-   
+    const safeValue = Math.round(boundsCheck(value));
+    const fillColor = getFillColor(safeValue);
+
     return (
         <View style={styles.container}>
             <View style={styles.box}>
-                <View style={[styles.fill, { height: `${value}%`, backgroundColor: fillColor }]} />
+                <View style={[styles.fill, { height: `${safeValue}%`, backgroundColor: fillColor }]} />
             </View>
-            <Text style={styles.value}>{value}%</Text>
-            <Text style={styles.label}> Food Monitor</Text>
+            <Text style={styles.value}>{safeValue}%</Text>
+            <Text style={styles.label}>Food Monitor</Text>
         </View>
     );
 }

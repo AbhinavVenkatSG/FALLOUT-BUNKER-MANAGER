@@ -26,7 +26,7 @@ namespace FalloutBunkerApi.Controllers
             {
                 new Thermometer(sensorFolder),
                 new WaterSensor(sensorFolder),
-                // new FoodSensor(sensorFolder),
+                new FoodSensor(sensorFolder),
                 new Generator(sensorFolder),
                 new O2Scrubber(sensorFolder),
                 new HealthMonitor(sensorFolder),

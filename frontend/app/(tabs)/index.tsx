@@ -1,4 +1,5 @@
 
+
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import Dosimeter from "../../components/Dosimeter/Dosimeter";
@@ -8,13 +9,14 @@ import OxygenScrubber from "../../components/OxygenScrubber/OxygenScrubber";
 import Thermometer from "../../components/Thermometer/Thermometer";
 import FoodMonitor from "../../components/FoodMonitor/FoodMonitor";
 import WaterSensor from "../../components/WaterSensor/WaterSensor";
+import { useFoodMonitor } from "../../components/FoodMonitor/useFoodMonitor";
 
-// Adjust this to match your API port
+// API config
 const API_URL = "http://localhost:5244/api/device";
 const BASE_WIDTH = 1024;
 const BASE_HEIGHT = 768;
 
-// Mirror the backend DeviceType enum
+// Mirror backend DeviceType enum
 enum DeviceType {
   Thermometer = 0,
   WaterSensor = 1,
@@ -43,6 +45,9 @@ export default function HomeScreen() {
     return device?.currentValue ?? 0;
   };
 
+  // Use food monitor hook for dynamic clamping
+  const foodValue = useFoodMonitor(getValue(DeviceType.FoodSensor));
+
   useEffect(() => {
     let isFetching = false;
 
@@ -64,7 +69,6 @@ export default function HomeScreen() {
 
     fetchDevices(); // initial fetch
     const interval = setInterval(fetchDevices, 3000); // poll every 3 seconds
-
     return () => clearInterval(interval);
   }, []);
 
@@ -72,12 +76,12 @@ export default function HomeScreen() {
     <View style={styles.viewport}>
       <View style={[styles.scaleWrapper, { transform: [{ scale }] }]}>
         <View style={styles.container}>
-          {/* Centered health bar at top */}
+          {/* Health Monitor at top */}
           <View style={styles.healthContainer}>
             <HealthMonitor value={getValue(DeviceType.HealthMonitor)} />
           </View>
 
-          {/* Centered power & atmosphere controls */}
+          {/* Resource row */}
           <View style={styles.resourceRow}>
             <View style={styles.resourceModule}>
               <WaterSensor value={getValue(DeviceType.WaterSensor)} />
@@ -88,9 +92,12 @@ export default function HomeScreen() {
             <View style={styles.resourceModule}>
               <OxygenScrubber value={getValue(DeviceType.O2Scrubber)} />
             </View>
+            <View style={styles.resourceModule}>
+              <FoodMonitor value={foodValue} />
+            </View>
           </View>
 
-          {/* Right-side "Exterior Values" box */}
+          {/* Exterior values */}
           <View style={styles.exteriorBox}>
             <Text style={styles.exteriorTitle}>Exterior Values</Text>
             <View style={styles.exteriorItem}>
