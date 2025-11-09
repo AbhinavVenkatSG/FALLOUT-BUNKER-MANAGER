@@ -41,11 +41,10 @@ export default function HomeScreen() {
 
   // Helper to get device value by enum
   const getValue = (type: DeviceType) => {
-    const device = devices.find(d => d.type === type);
+    const device = devices.find((d) => d.type === type);
     return device?.currentValue ?? 0;
   };
 
-  // Use food monitor hook for dynamic clamping
   const foodValue = useFoodMonitor(getValue(DeviceType.FoodSensor));
 
   useEffect(() => {
@@ -77,22 +76,22 @@ export default function HomeScreen() {
       <View style={[styles.scaleWrapper, { transform: [{ scale }] }]}>
         <View style={styles.container}>
           {/* Health Monitor at top */}
-          <View style={styles.healthContainer}>
+          <View style={styles.healthContainer} data-testid="health-value">
             <HealthMonitor value={getValue(DeviceType.HealthMonitor)} />
           </View>
 
           {/* Resource row */}
           <View style={styles.resourceRow}>
-            <View style={styles.resourceModule}>
+            <View style={styles.resourceModule} data-testid="water-value">
               <WaterSensor value={getValue(DeviceType.WaterSensor)} />
             </View>
-            <View style={styles.resourceModule}>
+            <View style={styles.resourceModule} data-testid="generator-value">
               <Generator value={getValue(DeviceType.Generator)} />
             </View>
-            <View style={styles.resourceModule}>
+            <View style={styles.resourceModule} data-testid="o2scrubber-value">
               <OxygenScrubber value={getValue(DeviceType.O2Scrubber)} />
             </View>
-            <View style={styles.resourceModule}>
+            <View style={styles.resourceModule} data-testid="food-value">
               <FoodMonitor value={foodValue} />
             </View>
           </View>
@@ -100,10 +99,10 @@ export default function HomeScreen() {
           {/* Exterior values */}
           <View style={styles.exteriorBox}>
             <Text style={styles.exteriorTitle}>Exterior Values</Text>
-            <View style={styles.exteriorItem}>
+            <View style={styles.exteriorItem} data-testid="thermometer-value">
               <Thermometer value={getValue(DeviceType.Thermometer)} />
             </View>
-            <View style={styles.exteriorItem}>
+            <View style={styles.exteriorItem} data-testid="dosimeter-value">
               <Dosimeter value={getValue(DeviceType.Dosimeter)} />
             </View>
           </View>

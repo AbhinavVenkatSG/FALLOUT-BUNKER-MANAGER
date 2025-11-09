@@ -13,7 +13,7 @@ namespace FalloutBunkerApi.Controllers
         private static readonly IDevice[] devices;
         private static readonly int[] queryCounters;
 
-        // Static constructor runs only once per app lifetime
+    
         static DeviceController()
         {
             string sensorFolder = Path.GetFullPath(Path.Combine(

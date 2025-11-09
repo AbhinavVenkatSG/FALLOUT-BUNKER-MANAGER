@@ -26,10 +26,10 @@ export function useDeviceData(apiUrl: string) {
       }
     };
 
-    fetchDevices(); // run immediately
-    const interval = setInterval(fetchDevices, 1000); // update every 1 second
+    fetchDevices();
+    const interval = setInterval(fetchDevices, 1000); 
 
-    return () => clearInterval(interval); // cleanup
+    return () => clearInterval(interval); 
   }, [apiUrl]);
 
   return devices;
