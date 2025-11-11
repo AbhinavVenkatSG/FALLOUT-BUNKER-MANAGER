@@ -1,4 +1,5 @@
-enum DeviceType
+namespace FalloutBunkerManager.Devices{
+public enum DeviceType
 {
     Thermometer,
     WaterSensor,
@@ -7,4 +8,5 @@ enum DeviceType
     O2Scrubber,
     HealthMonitor,
     Dosimeter
+}
 }

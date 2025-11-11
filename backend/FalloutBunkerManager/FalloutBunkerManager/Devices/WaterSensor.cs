@@ -1,20 +1,22 @@
 // INSERT AUTHOR NAME HERE
 // Water Sensor Device, reads delta water values from a file
+namespace FalloutBunkerManager.Devices{
 
-class WaterSensor : IDevice
+public class WaterSensor : IDevice
 {
     // Params
     public FileManager fileManager { get; }
     public DeviceType type { get { return DeviceType.WaterSensor; } }
-    public string filePath { get; } = Path.Combine("SensorEmulationFiles", "WaterLevels.dat");
+    public string filePath { get; } 
 
     private float currentWaterLevel { get; set; } = 100.0f;
     private const float MAX_WATER = 100f;
     private const float MIN_WATER = 0f;
 
     // Constructor
-    public WaterSensor()
+    public WaterSensor(string baseFolder)
     {
+        filePath = Path.Combine(baseFolder, "WaterLevels.dat");
         fileManager = new FileManager(filePath);
     }
 
@@ -41,4 +43,5 @@ class WaterSensor : IDevice
         throw new NotImplementedException();
         // Im not sure yet, sprint 2 issue :P
     }
+}
 }

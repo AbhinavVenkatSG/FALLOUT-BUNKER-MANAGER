@@ -1,20 +1,22 @@
 // Spencer Watkinson
 // Oxygen Scrubber Device, reads delta oxygen values from a file
+namespace FalloutBunkerManager.Devices{
 
-class O2Scrubber : IDevice
+public class O2Scrubber : IDevice
 {
     // Params
     public FileManager fileManager { get; }
     public DeviceType type { get { return DeviceType.O2Scrubber; } }
-    public string filePath { get; } = System.IO.Path.Combine("SensorEmulationFiles", "OxygenLevels.dat");
+    public string filePath { get; } 
 
     private float curO2Level = 100f;
     private const float MAX_O2_LEVEL = 100f;
     private const float MIN_O2_LEVEL = 0f;
 
     // Constructor
-    public O2Scrubber()
+    public O2Scrubber(string baseFolder)
     {
+        filePath = Path.Combine(baseFolder, "OxygenLevels.dat");
         fileManager = new FileManager(filePath);
     }
 
@@ -41,4 +43,5 @@ class O2Scrubber : IDevice
         throw new NotImplementedException();
         // Im not sure yet, sprint 2 issue :P
     }
+}
 }

@@ -1,55 +1,109 @@
-import Dosimeter from "@/components/Dosimeter/Dosimeter";
-import React from "react";
+
+
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View, useWindowDimensions } from "react-native";
+import Dosimeter from "../../components/Dosimeter/Dosimeter";
 import Generator from "../../components/Generator/Generator";
 import HealthMonitor from "../../components/HealthMonitor/HealthMonitor";
 import OxygenScrubber from "../../components/OxygenScrubber/OxygenScrubber";
 import Thermometer from "../../components/Thermometer/Thermometer";
+import FoodMonitor from "../../components/FoodMonitor/FoodMonitor";
 import WaterSensor from "../../components/WaterSensor/WaterSensor";
+import { useFoodMonitor } from "../../components/FoodMonitor/useFoodMonitor";
 
+// API config
+const API_URL = "http://localhost:5244/api/device";
 const BASE_WIDTH = 1024;
 const BASE_HEIGHT = 768;
+
+// Mirror backend DeviceType enum
+enum DeviceType {
+  Thermometer = 0,
+  WaterSensor = 1,
+  FoodSensor = 2,
+  Generator = 3,
+  O2Scrubber = 4,
+  HealthMonitor = 5,
+  Dosimeter = 6,
+}
+
+interface Device {
+  type: number;
+  currentValue: number;
+}
 
 export default function HomeScreen() {
   const { width, height } = useWindowDimensions();
   const scale = Math.min(width / BASE_WIDTH, height / BASE_HEIGHT);
 
+  const [devices, setDevices] = useState<Device[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Helper to get device value by enum
+  const getValue = (type: DeviceType) => {
+    const device = devices.find((d) => d.type === type);
+    return device?.currentValue ?? 0;
+  };
+
+  const foodValue = useFoodMonitor(getValue(DeviceType.FoodSensor));
+
+  useEffect(() => {
+    let isFetching = false;
+
+    const fetchDevices = async () => {
+      if (isFetching) return;
+      isFetching = true;
+
+      try {
+        const res = await fetch(API_URL);
+        const data: Device[] = await res.json();
+        setDevices(data);
+        setLoading(false);
+      } catch (err) {
+        console.error("Error fetching device data:", err);
+      } finally {
+        isFetching = false;
+      }
+    };
+
+    fetchDevices(); // initial fetch
+    const interval = setInterval(fetchDevices, 3000); // poll every 3 seconds
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <View style={styles.viewport}>
       <View style={[styles.scaleWrapper, { transform: [{ scale }] }]}>
         <View style={styles.container}>
-          {/* Centered health bar at top */}
-          <View style={styles.healthContainer}>
-            <HealthMonitor value={35} />
+          {/* Health Monitor at top */}
+          <View style={styles.healthContainer} data-testid="health-value">
+            <HealthMonitor value={getValue(DeviceType.HealthMonitor)} />
           </View>
 
-          {/* Centered power & atmosphere controls */}
+          {/* Resource row */}
           <View style={styles.resourceRow}>
-
-            <View style={styles.resourceModule}>
-              <WaterSensor value={60} />
+            <View style={styles.resourceModule} data-testid="water-value">
+              <WaterSensor value={getValue(DeviceType.WaterSensor)} />
             </View>
-
-            <View style={styles.resourceModule}>
-              <Generator value={21} />
+            <View style={styles.resourceModule} data-testid="generator-value">
+              <Generator value={getValue(DeviceType.Generator)} />
             </View>
-
-            <View style={styles.resourceModule}>
-              <OxygenScrubber value={88} />
+            <View style={styles.resourceModule} data-testid="o2scrubber-value">
+              <OxygenScrubber value={getValue(DeviceType.O2Scrubber)} />
             </View>
-
+            <View style={styles.resourceModule} data-testid="food-value">
+              <FoodMonitor value={foodValue} />
+            </View>
           </View>
 
-          {/* Right-side "Exterior Values" box */}
+          {/* Exterior values */}
           <View style={styles.exteriorBox}>
             <Text style={styles.exteriorTitle}>Exterior Values</Text>
-
-            <View style={styles.exteriorItem}>
-              <Thermometer value={23} />
+            <View style={styles.exteriorItem} data-testid="thermometer-value">
+              <Thermometer value={getValue(DeviceType.Thermometer)} />
             </View>
-
-            <View style={styles.exteriorItem}>
-              <Dosimeter value={90} />
+            <View style={styles.exteriorItem} data-testid="dosimeter-value">
+              <Dosimeter value={getValue(DeviceType.Dosimeter)} />
             </View>
           </View>
         </View>
@@ -81,12 +135,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 6,
   },
-  healthTitle: {
-    color: "#fff",
-    fontWeight: "700",
-    fontSize: 20,                
-    textAlign: "center",
-  },
   resourceRow: {
     flexDirection: "row",
     justifyContent: "center",
@@ -97,9 +145,8 @@ const styles = StyleSheet.create({
     marginRight: 250,
   },
   resourceModule: {
-    alignItems: "center"
+    alignItems: "center",
   },
-
   exteriorBox: {
     position: "absolute",
     right: 16,
@@ -119,14 +166,5 @@ const styles = StyleSheet.create({
   exteriorItem: {
     alignItems: "center",
     marginVertical: 8,
-  },
-  label: {
-    color: "#fff",
-    marginBottom: 4,
-  },
-  value: {
-    color: "#fff",
-    fontSize: 24,
-    fontWeight: "bold",
   },
 });

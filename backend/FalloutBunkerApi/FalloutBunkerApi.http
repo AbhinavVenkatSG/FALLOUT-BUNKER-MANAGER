@@ -1,0 +1,6 @@
+@FalloutBunkerApi_HostAddress = http://localhost:5244
+
+GET {{FalloutBunkerApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

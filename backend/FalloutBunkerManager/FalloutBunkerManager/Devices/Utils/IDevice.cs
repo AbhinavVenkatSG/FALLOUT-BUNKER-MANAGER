@@ -1,7 +1,7 @@
 // Spencer Watkinson
 // IDevice Interface, all devices implement this
-
-interface IDevice
+namespace FalloutBunkerManager.Devices{
+public interface IDevice
 {
     // Parameters
     public DeviceType type { get; }
@@ -11,4 +11,5 @@ interface IDevice
     // Methods
     public DeviceStatus QueryLatest(); // Returns latest value from device
     public void HandleCommand(DeviceCommand command);       // Each device will change this to be able to handle its commands
+}
 }

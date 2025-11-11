@@ -1,22 +1,26 @@
-﻿namespace FalloutBunkerManager
+﻿
+using FalloutBunkerManager.Devices;
+
+namespace FalloutBunkerManager
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            IDevice[] devices = new IDevice[]
+            string sensorFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SensorEmulationFiles");
+
+            IDevice[] devices =
             {
-                new Thermometer(),
-                new WaterSensor(),
-                new FoodSensor(),
-                new Generator(),
-                new O2Scrubber(),
-                new HealthMonitor(),
-                new Dosimeter()
+                new Thermometer(sensorFolder),
+                new WaterSensor(sensorFolder),
+                new FoodSensor(sensorFolder),
+                new Generator(sensorFolder),
+                new O2Scrubber(sensorFolder),
+                new HealthMonitor(sensorFolder),
+                new Dosimeter(sensorFolder)
             };
 
             var scadaController = new ScadaController(devices);
-
             scadaController.MainLoop();
         }
     }

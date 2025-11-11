@@ -1,29 +1,37 @@
-// INSERT AUTHOR NAME HERE
+// Devki Nandan Sharma
 // Food Sensor Device, reads delta food values from a file
-
-class FoodSensor : IDevice
+namespace FalloutBunkerManager.Devices{
+public class FoodSensor : IDevice
 {
     // Params
     public FileManager fileManager { get; }
     public DeviceType type { get { return DeviceType.FoodSensor; } }
-    public string filePath { get; } = System.IO.Path.Combine("SensorEmulationFiles", "FoodLevels.dat");
+    public string filePath { get; }
+    private float currentFoodLevel { get; set; } = 100.0f;
+    private float Max_Food = 100f;
+    private float Min_Food = 0f;
 
     // Constructor
-    public FoodSensor()
+    public FoodSensor(string baseFolder)
     {
+        filePath =Path.Combine(baseFolder,"FoodLevels.dat");
         fileManager = new FileManager(filePath);
     }
 
     // Methods
-    public DeviceStatus QueryLatest()
+     public DeviceStatus QueryLatest()
     {
-        throw new NotImplementedException();
         float readInValue = fileManager.GetNextValue();
-        // Do device specific math, if required
+
+        currentFoodLevel += readInValue;
+
+        if (currentFoodLevel > Max_Food) currentFoodLevel = Max_Food;
+        if (currentFoodLevel < Min_Food) currentFoodLevel = Min_Food;
+
         return new DeviceStatus
         {
             type = DeviceType.FoodSensor,
-            currentValue = 0 // Replace with actual processed value
+            currentValue = currentFoodLevel
         };
     }
 
@@ -32,4 +40,5 @@ class FoodSensor : IDevice
         throw new NotImplementedException();
         // Im not sure yet, sprint 2 issue :P
     }
+}
 }

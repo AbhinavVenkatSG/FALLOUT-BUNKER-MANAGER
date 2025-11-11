@@ -1,43 +1,34 @@
-class ScadaController
+using FalloutBunkerManager.Devices;
+
+namespace FalloutBunkerManager
 {
-    private IDevice[] deviceList;
-
-    // Constructor
-    public ScadaController(IDevice[] devices)
+    public class ScadaController
     {
-        deviceList = devices;
-    }
+        private IDevice[] deviceList;
 
-    public void MainLoop()
-    {
-        while (true)
+        public ScadaController(IDevice[] devices)
         {
-            // Query devices
-            var statuses = QueryDevices();
-
-            // Send statuses to front end
-            // Async wait for commands
-            // Dispatch commands to devices
-            // If command is next day, loop
+            deviceList = devices;
         }
 
-    }
-
-
-    /// <summary>
-    /// Queries all devices and returns their statuses to the front end
-    /// </summary>
-    /// <returns> A list of devices statuses </returns>
-    public DeviceStatus[] QueryDevices()
-    {
-        var deviceStatuses = new DeviceStatus[deviceList.Length];
-
-        for (int i = 0; i < deviceList.Length; i++)
+        public void MainLoop()
         {
-            DeviceStatus status = deviceList[i].QueryLatest();
-            deviceStatuses[i] = status;
+            while (true)
+            {
+                var statuses = QueryDevices();
+                // TODO: send statuses to frontend
+            }
         }
 
-        return deviceStatuses;
+        public DeviceStatus[] QueryDevices()
+        {
+            var deviceStatuses = new DeviceStatus[deviceList.Length];
+            for (int i = 0; i < deviceList.Length; i++)
+            {
+                deviceStatuses[i] = deviceList[i].QueryLatest();
+            }
+            return deviceStatuses;
+        }
     }
 }
+
